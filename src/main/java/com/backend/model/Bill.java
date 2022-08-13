@@ -30,7 +30,7 @@ public class Bill {
     @Column(name = "biller_name", nullable = false)
     private String billerName;
 
-    @Column(name = "biller_email")
+    @Column(name = "biller_email", nullable = false)
     private String billerEmail;
 
     @Column(name = "biller_phone_no", nullable = false)
@@ -45,7 +45,7 @@ public class Bill {
     @Column(name = "amount_paid", columnDefinition = "BIGINT DEFAULT 0")
     private Long amountPaid;
 
-    @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
+    @Column(name = "is_bill_paid", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isBillPaid;
 
     @Column(name = "updated_at", nullable = false)
