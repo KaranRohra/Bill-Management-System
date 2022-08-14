@@ -60,10 +60,10 @@ public class UserController {
         User user = userRepository.findByEmail(userDto.getEmail());
         if (user == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    Map.of("email", "User not found with email " + userDto.getEmail()));
+                    Map.of("error", "User not found with email " + userDto.getEmail()));
         if (!user.getPassword().equals(Helper.getHash(userDto.getPassword())))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    Map.of("password", "Wrong password"));
+                    Map.of("error", "Wrong password"));
 
         Session session = sessionRepository.findByUser(user);
         if (session == null) {
