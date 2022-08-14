@@ -8,5 +8,4 @@ public class BillManagerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BillManagerApplication.class, args);
 	}
-
 }

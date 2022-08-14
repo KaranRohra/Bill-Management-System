@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.exception.AccountWithEmailAlreadyExistException;
+import com.backend.mapstruct.dto.UserDto;
+import com.backend.mapstruct.mappers.UserMapper;
 import com.backend.model.Session;
 import com.backend.model.User;
 import com.backend.repository.SessionRepository;
 import com.backend.repository.UserRepository;
 import com.backend.utility.Helper;
 import com.backend.utility.Links;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @CrossOrigin("*")
 @RestController
@@ -29,6 +31,8 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private SessionRepository sessionRepository;
+    @Autowired
+    private UserMapper userMapper;
 
     @PostMapping(Links.REGISTER_URL)
     public ResponseEntity<?> create(@RequestBody User user) {
@@ -36,7 +40,7 @@ public class UserController {
             user.setPassword(Helper.getHash(user.getPassword()));
             if (userRepository.findByEmail(user.getEmail()) != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                        "error", "Account with this email already exists"));
+                        "error", "Account with this email " + user.getEmail() + " already exists"));
             }
             userRepository.save(user);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
@@ -47,13 +51,17 @@ public class UserController {
     }
 
     @PostMapping(Links.AUTH_URL)
-    public ResponseEntity<Map<String, String>> authUser(@RequestBody Map<String, String> map) {
-        String email = map.get("email"), password = map.get("password");
-        User user = userRepository.findByEmail(email);
+    public ResponseEntity<Map<String, String>> authUser(@RequestBody UserDto userDto) {
+        if (userDto.getEmail() == null || userDto.getPassword() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "error", "Email or Password is missing"));
+        }
+
+        User user = userRepository.findByEmail(userDto.getEmail());
         if (user == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    Map.of("email", "User not found with email " + email));
-        if (!user.getPassword().equals(Helper.getHash(password)))
+                    Map.of("email", "User not found with email " + userDto.getEmail()));
+        if (!user.getPassword().equals(Helper.getHash(userDto.getPassword())))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     Map.of("password", "Wrong password"));
 
@@ -76,27 +84,20 @@ public class UserController {
 
     @PutMapping(Links.UPDATE_USER_URL)
     public ResponseEntity<?> updateUser(@RequestHeader(value = "Authorization") String token,
-            @RequestBody User user) throws JsonProcessingException {
+            @RequestBody UserDto userDto) {
         Session session = Helper.getSession(sessionRepository, token);
-        User updateUser = session.getUser();
+        User user = session.getUser();
+        if (userDto.getPassword() != null)
+            userDto.setPassword(Helper.getHash(userDto.getPassword()));
 
-        if (user.getEmail() != null && !user.getEmail().equals(updateUser.getEmail())) {
-            if ( userRepository.findByEmail(user.getEmail()) != null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Account with email " + user.getEmail() + " already exists"));
-            updateUser.setEmail(user.getEmail());
-            sessionRepository.delete(session);
+        try {
+            userMapper.updateUserFromDto(userDto, user);
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+            throw new AccountWithEmailAlreadyExistException(
+                    "Account with email " + userDto.getEmail() + " already exist");
         }
-        if (user.getPhoneNo() != null)
-            updateUser.setPhoneNo(user.getPhoneNo());
-        if (user.getName() != null)
-            updateUser.setName(user.getName());
-        if (user.getPassword() != null) {
-            updateUser.setPassword(Helper.getHash(user.getPassword()));
-            sessionRepository.delete(session);
-        }
-
-        userRepository.save(updateUser);
-        return ResponseEntity.ok(updateUser);
+        sessionRepository.delete(session);
+        return ResponseEntity.ok(user);
     }
 }
