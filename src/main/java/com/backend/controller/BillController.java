@@ -45,12 +45,14 @@ public class BillController {
         Session session = Helper.getSession(sessionRepository, token);
         bill.setUser(session.getUser());
         try {
+            if (bill.getAmountPaid() == null)
+                bill.setAmountPaid(0l);
             billRepository.save(bill);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Some fields are missing."));
         }
-        return ResponseEntity.ok(bill);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bill);
     }
 
     @GetMapping(Links.GET_ALL_BILLS)
@@ -89,7 +91,7 @@ public class BillController {
                 .orElseThrow(() -> new BillNotFoundException("Bill not found with id " + id));
         if (deleteBill.getUser() != session.getUser())
             throw new BillNotFoundException("Bill not found with id " + id);
-        
+
         billRepository.delete(deleteBill);
         return new ResponseEntity<>(HttpStatus.OK);
     }

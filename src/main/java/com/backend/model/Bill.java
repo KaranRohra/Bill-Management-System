@@ -12,6 +12,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -47,7 +49,8 @@ public class Bill {
     @Column(name = "amount", nullable = false)
     private Long amount;
 
-    @Column(name = "amount_paid", columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "amount_paid")
+    @ColumnDefault("0")
     private Long amountPaid;
 
     @Column(name = "is_bill_paid", columnDefinition = "BOOLEAN DEFAULT FALSE")

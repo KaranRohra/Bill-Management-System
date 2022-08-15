@@ -29,7 +29,7 @@ function Register() {
                 }
                 setLoading(false);
             })
-            .catch((e) => {
+            .catch((err) => {
                 setAlert({
                     variant: "danger",
                     message: `Account with email ${data.email} already exist`,

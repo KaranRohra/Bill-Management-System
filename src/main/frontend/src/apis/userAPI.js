@@ -19,3 +19,11 @@ export const authUserAPI = (userDetails) => {
         userDetails
     );
 };
+
+export const getUserAPI = () => {
+    return axios.get(process.env.REACT_APP_BASE_URL + "/user/", {
+        headers: {
+            Authorization: getToken(),
+        },
+    });
+};
