@@ -27,3 +27,11 @@ export const getUserAPI = () => {
         },
     });
 };
+
+export const updateUserAPI = (data) => {
+    return axios.put(process.env.REACT_APP_BASE_URL + "/user/", data, {
+        headers: {
+            Authorization: getToken(),
+        },
+    });
+}

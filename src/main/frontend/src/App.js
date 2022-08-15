@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "components/Login";
 import Register from "components/Register";
 import Home from "components/Home";
+import Profile from "components/Profile";
 import CreateBill from "components/CreateBill";
 import { getUserAPI } from "apis/userAPI";
 import Cookies from "universal-cookie";
@@ -43,6 +44,7 @@ function App() {
                         <Route exact path="/register" element={<Register />} />
                         <Route exact path="/" element={<Home />} />
                         <Route exact path="/create" element={<CreateBill />} />
+                        <Route exact path="/profile" element={<Profile />} />
                     </Routes>
                 </Router>
             )}
