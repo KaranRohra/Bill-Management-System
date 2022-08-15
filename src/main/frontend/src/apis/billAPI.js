@@ -8,3 +8,31 @@ export const createBillAPI = (bill) => {
         },
     });
 };
+
+export const getBillsAPI = () => {
+    return axios.get(process.env.REACT_APP_BASE_URL + "/bills/", {
+        headers: {
+            Authorization: getToken(),
+        },
+    });
+};
+
+export const deleteBillAPI = (billId) => {
+    return axios.delete(process.env.REACT_APP_BASE_URL + "/bills/" + billId, {
+        headers: {
+            Authorization: getToken(),
+        },
+    });
+};
+
+export const updateBillAPI = (billDetails, billId) => {
+    return axios.put(
+        process.env.REACT_APP_BASE_URL + "/bills/" + billId,
+        billDetails,
+        {
+            headers: {
+                Authorization: getToken(),
+            },
+        }
+    );
+};

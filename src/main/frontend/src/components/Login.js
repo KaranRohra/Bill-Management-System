@@ -41,7 +41,7 @@ function Login() {
 
     return (
         <Container
-            className="mt-5"
+            className="mt-5 text-light"
             style={{
                 display: "flex",
                 justifyContent: "center",

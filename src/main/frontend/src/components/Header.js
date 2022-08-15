@@ -7,7 +7,7 @@ function Header() {
     const navigate = useNavigate();
     const cookies = new Cookies();
     return (
-        <Navbar bg="dark" expand="lg" variant="dark">
+        <Navbar bg="light" expand="lg" variant="light">
             <Container fluid>
                 <Navbar.Brand onClick={() => navigate("/")}>
                     Bill Manger

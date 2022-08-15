@@ -11,6 +11,7 @@ function CreateBill() {
     const [loading, setLoading] = React.useState(false);
     const [alert, setAlert] = React.useState({});
     const navigate = useNavigate();
+
     React.useEffect(() => {
         if (!getToken()) navigate("/");
     }, [navigate]);
@@ -47,7 +48,7 @@ function CreateBill() {
         <>
             <Header />
             <Container
-                className="mt-5"
+                className="mt-5 text-light"
                 style={{ display: "flex", justifyContent: "center" }}
             >
                 <Spinner
@@ -122,7 +123,8 @@ function CreateBill() {
                                     type="number"
                                     placeholder="Enter Amount Paid"
                                     name="amountPaid"
-                                    // defaultValue={0}
+                                    required
+                                    defaultValue={0}
                                 />
                             </Form.Group>
                         </div>

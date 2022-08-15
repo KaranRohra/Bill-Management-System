@@ -49,8 +49,7 @@ public class Bill {
     @Column(name = "amount", nullable = false)
     private Long amount;
 
-    @Column(name = "amount_paid")
-    @ColumnDefault("0")
+    @Column(name = "amount_paid", nullable = false)
     private Long amountPaid;
 
     @Column(name = "is_bill_paid", columnDefinition = "BOOLEAN DEFAULT FALSE")

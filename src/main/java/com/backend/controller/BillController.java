@@ -45,8 +45,6 @@ public class BillController {
         Session session = Helper.getSession(sessionRepository, token);
         bill.setUser(session.getUser());
         try {
-            if (bill.getAmountPaid() == null)
-                bill.setAmountPaid(0l);
             billRepository.save(bill);
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
