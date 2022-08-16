@@ -3,7 +3,9 @@ package com.backend.controller;
 import java.util.List;
 import java.util.Map;
 
-// import org.mapstruct.factory.Mappers;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.exception.BillNotFoundException;
@@ -40,6 +43,9 @@ public class BillController {
     @Autowired
     private BillMapper billMapper;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @PostMapping(Links.CREATE_BILL)
     public ResponseEntity<?> createBill(@RequestBody Bill bill, @RequestHeader("Authorization") String token) {
         Session session = Helper.getSession(sessionRepository, token);
@@ -54,9 +60,11 @@ public class BillController {
     }
 
     @GetMapping(Links.GET_ALL_BILLS)
-    public ResponseEntity<List<Bill>> getBills(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<Bill>> getBills(@RequestHeader("Authorization") String token,
+            @RequestParam Map<String, String> filterData) {
         Session session = Helper.getSession(sessionRepository, token);
-        return ResponseEntity.ok(session.getUser().getBills());
+        Query query = billRepository.filterBill(entityManager, filterData, session.getUser().getId());
+        return ResponseEntity.ok(query.getResultList()); // Unchecked exception may occur so be care full !!!
     }
 
     @GetMapping(Links.GET_BILL_BY_ID)

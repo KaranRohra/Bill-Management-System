@@ -19,7 +19,7 @@ function Home() {
     React.useEffect(() => {
         if (!getToken()) navigate("/login");
 
-        getBillsAPI()
+        getBillsAPI({}) // TODO: Add filter fields
             .then((response) => {
                 setBills(response.data);
                 setLoading(false);

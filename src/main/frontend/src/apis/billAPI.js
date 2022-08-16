@@ -9,12 +9,19 @@ export const createBillAPI = (bill) => {
     });
 };
 
-export const getBillsAPI = () => {
-    return axios.get(process.env.REACT_APP_BASE_URL + "/bills/", {
-        headers: {
-            Authorization: getToken(),
-        },
-    });
+export const getBillsAPI = (filter) => {
+    return axios.get(
+        process.env.REACT_APP_BASE_URL +
+            `/bills/?sortBy=${filter.sortBy}&` + 
+            `search=${filter.search}&` + 
+            `dateGreaterThan=${filter.dateGreaterThan}&dateLessThan=${filter.dateLessThan}&` + 
+            `amountGreaterThan=${filter.amountGreaterThan}&amountLessThan=${filter.amountLessThan}`,
+        {
+            headers: {
+                Authorization: getToken(),
+            },
+        }
+    );
 };
 
 export const deleteBillAPI = (billId) => {
