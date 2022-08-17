@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Form, Button } from "react-bootstrap";
+import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 
 function FilterForm(props) {
@@ -40,130 +40,148 @@ function FilterForm(props) {
             style={props.style}
         >
             <Form onSubmit={handleSubmit}>
-                <div style={{ display: "flex" }}>
-                    <div className="col-4">
-                        <div
-                            style={{
-                                display: "flex",
-                            }}
-                        >
-                            <Form.Group className="m-2">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Search"
-                                    name="search"
-                                    defaultValue={props.filterData.search || ""}
-                                />
-                            </Form.Group>
-                            <Form.Group className="m-2">
-                                <Form.Select
-                                    name="sortBy"
-                                    defaultValue={props.filterData.sortBy}
-                                >
-                                    <option value="id desc">Sort By</option>
-                                    <option value="billerName asc">
-                                        Biller Name ASC
-                                    </option>
-                                    <option value="billerName desc">
-                                        Biller Name DESC
-                                    </option>
-                                    <option value="billerEmail asc">
-                                        Biller Email ASC
-                                    </option>
-                                    <option value="billerEmail desc">
-                                        Biller Email DESC
-                                    </option>
-                                    <option value="phoneNo asc">
-                                        Biller Phone No. ASC
-                                    </option>
-                                    <option value="phoneNo desc">
-                                        Biller Phone No. DESC
-                                    </option>
-                                    <option value="amount asc">
-                                        Bill Amount ASC
-                                    </option>
-                                    <option value="amount desc">
-                                        Bill Amount DESC
-                                    </option>
-                                    <option value="isBillPaid asc">
-                                        Bill Paid ASC
-                                    </option>
-                                    <option value="isBillPaid desc">
-                                        Bill Paid DESC
-                                    </option>
-                                    <option value="updatedAt asc">
-                                        Updated At ASC
-                                    </option>
-                                    <option value="updatedAt desc">
-                                        Updated At DESC
-                                    </option>
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                        <div
-                            style={{
-                                display: "flex",
-                            }}
-                        >
-                            <Form.Group className="m-2">
-                                <Form.Control
-                                    type="number"
-                                    placeholder="Amount greater than"
-                                    name="amountGreaterThan"
-                                    defaultValue={
-                                        props.filterData.amountGreaterThan
-                                    }
-                                />
-                            </Form.Group>
-                            <Form.Group className="m-2">
-                                <Form.Control
-                                    type="number"
-                                    placeholder="Amount less than"
-                                    name="amountLessThan"
-                                    defaultValue={
-                                        props.filterData.amountLessThan
-                                    }
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
-                    <div className="col">
-                        <div style={{ display: "flex" }}>
-                            <Form.Group className="m-2">
-                                <Form.Control
-                                    type="text"
-                                    defaultValue="Date greater than: "
-                                    disabled
-                                />
-                            </Form.Group>
-                            <DatePicker
-                                selected={dateGreaterThan}
-                                onChange={(date) => setDateGreaterThan(date)}
-                                className="m-2"
+                <Row>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="text"
+                                placeholder="Search"
+                                name="search"
+                                defaultValue={props.filterData.search || ""}
                             />
-                        </div>
-                        <div style={{ display: "flex" }}>
-                            <Form.Group className="m-2">
-                                <Form.Control
-                                    type="text"
-                                    defaultValue="Date less than: "
-                                    disabled
-                                />
-                            </Form.Group>
-                            <DatePicker
-                                selected={dateLessThan}
-                                onChange={(date) => setDateLessThan(date)}
-                                className="m-2"
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="text"
+                                defaultValue="Amount greater than: "
+                                disabled
                             />
-                        </div>
-                    </div>
-                </div>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="number"
+                                placeholder="Amount greater than"
+                                name="amountGreaterThan"
+                                defaultValue={
+                                    props.filterData.amountGreaterThan
+                                }
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="text"
+                                defaultValue="Date greater than (IN): "
+                                disabled
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <DatePicker
+                            selected={dateGreaterThan}
+                            onChange={(date) => setDateGreaterThan(date)}
+                            className="m-2"
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Select
+                                name="sortBy"
+                                defaultValue={props.filterData.sortBy}
+                            >
+                                <option value="id desc">Sort By</option>
+                                <option value="billerName asc">
+                                    Biller Name ASC
+                                </option>
+                                <option value="billerName desc">
+                                    Biller Name DESC
+                                </option>
+                                <option value="billerEmail asc">
+                                    Biller Email ASC
+                                </option>
+                                <option value="billerEmail desc">
+                                    Biller Email DESC
+                                </option>
+                                <option value="phoneNo asc">
+                                    Biller Phone No. ASC
+                                </option>
+                                <option value="phoneNo desc">
+                                    Biller Phone No. DESC
+                                </option>
+                                <option value="amount asc">
+                                    Bill Amount ASC
+                                </option>
+                                <option value="amount desc">
+                                    Bill Amount DESC
+                                </option>
+                                <option value="isBillPaid asc">
+                                    Bill Paid ASC
+                                </option>
+                                <option value="isBillPaid desc">
+                                    Bill Paid DESC
+                                </option>
+                                <option value="updatedAt asc">
+                                    Updated At ASC
+                                </option>
+                                <option value="updatedAt desc">
+                                    Updated At DESC
+                                </option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="text"
+                                defaultValue="Amount less than: "
+                                disabled
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="number"
+                                placeholder="Amount less than"
+                                name="amountLessThan"
+                                defaultValue={props.filterData.amountLessThan}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="m-2">
+                            <Form.Control
+                                type="text"
+                                defaultValue="Date less than (EX): "
+                                disabled
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <DatePicker
+                            selected={dateLessThan}
+                            onChange={(date) => setDateLessThan(date)}
+                            className="m-2"
+                        />
+                    </Col>
+                </Row>
                 <div style={{ display: "flex" }}>
                     <Form.Group className="m-2">
                         <Form.Check
                             type="checkbox"
                             label="Paid Bills"
                             name="paidBills"
+                            defaultChecked={
+                                props.filterData.billPaid &&
+                                props.filterData.billPaid.includes("true")
+                            }
                         />
                     </Form.Group>
                     <Form.Group className="m-2">
@@ -171,8 +189,16 @@ function FilterForm(props) {
                             type="checkbox"
                             label="UnPaid Bills"
                             name="unpaidBills"
+                            defaultChecked={
+                                props.filterData.billPaid &&
+                                props.filterData.billPaid.includes("false")
+                            }
                         />
                     </Form.Group>
+                    <p style={{ marginLeft: "auto" }} className="mt-2">
+                        ASC: Ascending, DESC: Descending, IN: Inclusive, EX:
+                        Exclusive
+                    </p>
                 </div>
                 <div style={{ display: "flex" }}>
                     <Button className="m-2" type="submit">
@@ -185,7 +211,6 @@ function FilterForm(props) {
                         Clear
                     </Button>
                 </div>
-                <p>ASC: Ascending, DESC: Descending</p>
             </Form>
         </Container>
     );
