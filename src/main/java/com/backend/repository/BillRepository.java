@@ -22,6 +22,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
                                                 +
                                                 "updatedAt BETWEEN '%s' AND '%s' AND " +
                                                 "amount BETWEEN %s AND %s AND " +
+                                                "isBillPaid IN (%s) AND " +
                                                 "user = %d " +
                                                 "ORDER BY %s",
                                                 search, search, search,
@@ -30,6 +31,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
                                                 filterData.getOrDefault("amountGreaterThan", "0"),
                                                 filterData.getOrDefault("amountLessThan",
                                                                 Long.toString(Long.MAX_VALUE)),
+                                                filterData.getOrDefault("billPaid", "true,false"),
                                                 userId,
                                                 filterData.getOrDefault("sortBy", "id desc")));
 

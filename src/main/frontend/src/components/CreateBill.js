@@ -41,7 +41,6 @@ function CreateBill() {
                 setAlert({ variant: "danger", message: "Some error occurred" });
                 setLoading(false);
             });
-        console.log(bill);
     };
 
     return (

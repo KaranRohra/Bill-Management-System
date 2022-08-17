@@ -1,11 +1,18 @@
 import React from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getToken } from "apis/userAPI";
 import Header from "components/Header";
+import FilterForm from "components/FilterForm";
 import { toast, ToastContainer } from "react-toastify";
-import { Accordion, Col, Container, Spinner, Card } from "react-bootstrap";
+import {
+    Accordion,
+    Col,
+    Container,
+    Spinner,
+    Card,
+    Button,
+} from "react-bootstrap";
 import { deleteBillAPI, getBillsAPI } from "apis/billAPI";
-import Cookies from "universal-cookie";
 import * as Icons from "react-bootstrap-icons";
 import BillDetails from "components/BillDetails";
 import { Link } from "react-router-dom";
@@ -14,21 +21,30 @@ import { formatDateTime } from "utils";
 function Home() {
     const [bills, setBills] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
+    const [showFilterForm, setShowFilterForm] = React.useState(false);
+    const [filterData, setFilterData] = React.useState({});
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     React.useEffect(() => {
         if (!getToken()) navigate("/login");
 
-        getBillsAPI({}) // TODO: Add filter fields
+        const fd = {};
+        const paramsKey = searchParams.keys();
+        for (const key of paramsKey) {
+            fd[key] = searchParams.get(key);
+        }
+        setFilterData(fd);
+        getBillsAPI(fd)
             .then((response) => {
                 setBills(response.data);
                 setLoading(false);
             })
             .catch((err) => {
-                new Cookies().remove("token");
-                navigate("/login");
+                toast.error("Some error occurred");
+                toast.error("Logout and try again");
             });
-    }, [navigate]);
+    }, [navigate, searchParams]);
 
     const handleDelete = (id) => {
         setLoading(true);
@@ -60,6 +76,15 @@ function Home() {
                 className="mt-5"
                 style={{ display: loading ? "none" : "block" }}
             >
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                        variant="danger"
+                        onClick={() => (window.location.href = "/")}
+                        className="m-2"
+                    >
+                        Clear
+                    </Button>
+                </div>
                 {bills.length > 0 ? (
                     <div>
                         <Accordion defaultActiveKey="0" className="mb-1">
@@ -75,9 +100,28 @@ function Home() {
                                     <Col xs={1}>Amount</Col>
                                     <Col xs={1}>Bill Paid</Col>
                                     <Col xs={2}>Updated At</Col>
+                                    <Col
+                                        className="text-primary"
+                                        style={{
+                                            cursor: "pointer",
+                                            fontWeight: 600,
+                                            textDecoration: "underline",
+                                        }}
+                                        onClick={() =>
+                                            setShowFilterForm(!showFilterForm)
+                                        }
+                                    >
+                                        Filter
+                                    </Col>
                                 </Card.Header>
                             </Card>
                         </Accordion>
+                        <FilterForm
+                            style={{
+                                display: showFilterForm ? "block" : "none",
+                            }}
+                            filterData={filterData}
+                        />
                         <Accordion defaultActiveKey="0">
                             {bills.map((bill, key) => {
                                 bill["createdAt"] = formatDateTime(

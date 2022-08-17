@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Nav, Container, Form, Navbar } from "react-bootstrap";
+import { Nav, Container, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
@@ -35,15 +35,6 @@ function Header() {
                             Logout
                         </Nav.Link>
                     </Nav>
-                    <Form className="d-flex">
-                        <Form.Control
-                            type="search"
-                            placeholder="Search"
-                            className="me-2"
-                            aria-label="Search"
-                        />
-                        <Button variant="outline-success">Search</Button>
-                    </Form>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

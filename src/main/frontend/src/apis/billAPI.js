@@ -10,18 +10,23 @@ export const createBillAPI = (bill) => {
 };
 
 export const getBillsAPI = (filter) => {
-    return axios.get(
-        process.env.REACT_APP_BASE_URL +
-            `/bills/?sortBy=${filter.sortBy}&` + 
-            `search=${filter.search}&` + 
-            `dateGreaterThan=${filter.dateGreaterThan}&dateLessThan=${filter.dateLessThan}&` + 
-            `amountGreaterThan=${filter.amountGreaterThan}&amountLessThan=${filter.amountLessThan}`,
-        {
-            headers: {
-                Authorization: getToken(),
-            },
-        }
-    );
+    let url = process.env.REACT_APP_BASE_URL + "/bills/?";
+    if (filter.sortBy) url += `sortBy=${filter.sortBy}&`;
+    if (filter.search) url += `search=${filter.search}&`;
+    if (filter.billPaid) url += `billPaid=${filter.billPaid}&`;
+    if (filter.dateGreaterThan)
+        url += `dateGreaterThan=${filter.dateGreaterThan}&`;
+    if (filter.dateLessThan) url += `dateLessThan=${filter.dateLessThan}&`;
+    if (filter.amountGreaterThan)
+        url += `amountGreaterThan=${filter.amountGreaterThan}&`;
+    if (filter.amountLessThan)
+        url += `amountLessThan=${filter.amountLessThan}&`;
+    if(filter.billPaid) url += `billPaid=${filter.billPaid}`;
+    return axios.get(url, {
+        headers: {
+            Authorization: getToken(),
+        },
+    });
 };
 
 export const deleteBillAPI = (billId) => {

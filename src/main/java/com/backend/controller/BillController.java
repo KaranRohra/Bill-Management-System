@@ -60,11 +60,11 @@ public class BillController {
     }
 
     @GetMapping(Links.GET_ALL_BILLS)
-    public ResponseEntity<List<Bill>> getBills(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<?>> getBills(@RequestHeader("Authorization") String token,
             @RequestParam Map<String, String> filterData) {
         Session session = Helper.getSession(sessionRepository, token);
         Query query = billRepository.filterBill(entityManager, filterData, session.getUser().getId());
-        return ResponseEntity.ok(query.getResultList()); // Unchecked exception may occur so be care full !!!
+        return ResponseEntity.ok(query.getResultList());
     }
 
     @GetMapping(Links.GET_BILL_BY_ID)
