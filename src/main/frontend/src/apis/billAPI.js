@@ -21,7 +21,7 @@ export const getBillsAPI = (filter) => {
         url += `amountGreaterThan=${filter.amountGreaterThan}&`;
     if (filter.amountLessThan)
         url += `amountLessThan=${filter.amountLessThan}&`;
-    if(filter.billPaid) url += `billPaid=${filter.billPaid}`;
+    if (filter.billPaid) url += `billPaid=${filter.billPaid}`;
     return axios.get(url, {
         headers: {
             Authorization: getToken(),
@@ -30,7 +30,7 @@ export const getBillsAPI = (filter) => {
 };
 
 export const deleteBillAPI = (billId) => {
-    return axios.delete(process.env.REACT_APP_BASE_URL + "/bills/" + billId, {
+    return axios.delete(`${process.env.REACT_APP_BASE_URL}/bills/${billId}/`, {
         headers: {
             Authorization: getToken(),
         },
@@ -39,7 +39,7 @@ export const deleteBillAPI = (billId) => {
 
 export const updateBillAPI = (billDetails, billId) => {
     return axios.put(
-        process.env.REACT_APP_BASE_URL + "/bills/" + billId,
+        `${process.env.REACT_APP_BASE_URL}/bills/${billId}/`,
         billDetails,
         {
             headers: {

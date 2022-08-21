@@ -4,21 +4,22 @@ import { Form, Button, Container, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 function BillDetails({ billIndex, bills, setBills, handleDelete }) {
+    const [billImage, setBillImage] = React.useState();
     const bill = bills[billIndex];
 
     const handleUpdate = (e) => {
         e.preventDefault();
-        const updatedBill = {
-            billerName: e.target.billerName.value,
-            billerEmail: e.target.billerEmail.value,
-            phoneNo: e.target.phoneNo.value,
-            amount: e.target.amount.value,
-            amountPaid: e.target.amountPaid.value,
-            description: e.target.description.value,
-            billPaid: e.target.billPaid.checked ? true : false,
-        };
+        const formatData = new FormData();
+        formatData.append("billerName", e.target.billerName.value);
+        formatData.append("billerEmail", e.target.billerEmail.value);
+        formatData.append("phoneNo", e.target.phoneNo.value);
+        formatData.append("amount", e.target.amount.value);
+        formatData.append("amountPaid", e.target.amountPaid.value);
+        formatData.append("description", e.target.description.value);
+        formatData.append("billPaid", e.target.billPaid.checked ? true : false);
+        if (billImage) formatData.append("billImage", billImage);
 
-        updateBillAPI(updatedBill, bill.id)
+        updateBillAPI(formatData, bill.id)
             .then((response) => {
                 toast.success("Bill updated successfully");
                 bills[billIndex] = response.data;
@@ -87,11 +88,39 @@ function BillDetails({ billIndex, bills, setBills, handleDelete }) {
                         />
                     </Form.Group>
                     <Form.Group className="mb-3 col-3">
-                        <Form.Label>Bill Image</Form.Label>
+                        <Form.Label>
+                            Bill Image{" "}
+                            {bill.billImage && (
+                                <>
+                                    (
+                                    <a
+                                        href={
+                                            process.env.REACT_APP_BASE_URL +
+                                            `/bill/image/${bill.id}/`
+                                        }
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        Click to view
+                                    </a>
+                                    )
+                                </>
+                            )}
+                        </Form.Label>
                         <Form.Control
                             type="file"
                             placeholder="Choose image"
                             name="billImage"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (!file) {
+                                    setBillImage(null);
+                                } else if (file.size > 2 * 1e6)
+                                    toast.error(
+                                        "Image size should be less than 2MB"
+                                    );
+                                else setBillImage(e.target.files[0]);
+                            }}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3 col-3">

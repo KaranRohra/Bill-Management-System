@@ -41,6 +41,9 @@ public class Bill {
     @Column(name = "biller_phone_no", nullable = false)
     private String phoneNo;
 
+    @Column(name = "image")
+    private String billImage;
+
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 

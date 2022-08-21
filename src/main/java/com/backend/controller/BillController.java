@@ -1,14 +1,28 @@
 package com.backend.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +34,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.exception.BillNotFoundException;
+import com.backend.exception.UploadDownloadFileException;
 import com.backend.mapstruct.dto.BillDto;
 import com.backend.mapstruct.mappers.BillMapper;
 import com.backend.model.Bill;
@@ -76,8 +92,11 @@ public class BillController {
     }
 
     @PutMapping(Links.UPDATE_BILL)
-    public ResponseEntity<?> updateBill(@RequestHeader("Authorization") String token, @RequestBody BillDto billDto,
+    public ResponseEntity<?> updateBill(@RequestHeader("Authorization") String token,
+            BillDto billDto,
+            @RequestParam(name = "billImage", required = false) MultipartFile multipartFile,
             @PathVariable("id") Long id) {
+
         Session session = Helper.getSession(sessionRepository, token);
         Bill bill = billRepository.findById(id)
                 .orElseThrow(() -> new BillNotFoundException("Bill not found with id " + id));
@@ -86,6 +105,8 @@ public class BillController {
             throw new BillNotFoundException("Bill not found with id " + id);
 
         billMapper.updateBillFromDto(billDto, bill);
+        if (multipartFile != null && !multipartFile.isEmpty())
+            bill.setBillImage(saveBillImage(multipartFile, bill.getId()));
         billRepository.save(bill);
         return ResponseEntity.ok(bill);
     }
@@ -100,5 +121,45 @@ public class BillController {
 
         billRepository.delete(deleteBill);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(Links.GET_BILL_IMAGE)
+    public ResponseEntity<Resource> getImage(@PathVariable("id") Long id, HttpServletRequest request) throws Exception {
+        Bill bill = billRepository.findById(id)
+                .orElseThrow(() -> new BillNotFoundException("Bill not found with id " + id));
+        if (bill.getBillImage() == null) {
+            throw new UploadDownloadFileException("Image not found for bill with id " + id);
+        }
+        try {
+            File file = new ClassPathResource("static/bill_images/" + bill.getBillImage()).getFile();
+            Resource resource = new UrlResource(Paths.get(file.getAbsolutePath()).toUri());
+            return ResponseEntity.ok().contentType(
+                    MediaType.parseMediaType(
+                            request.getServletContext().getMimeType(resource.getFile().getAbsolutePath())))
+                    // If headers is added the file get downloaded else it will display on browser
+                    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+                    // resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception exception) {
+            throw new UploadDownloadFileException("Unable to get File");
+        }
+    }
+
+    private String saveBillImage(MultipartFile multipartFile, Long id) {
+        try {
+            File file = new ClassPathResource("").getFile();
+            String fileDir = file.getPath() + "/static/bill_images/";
+            String fileName = id + "_" + multipartFile.getOriginalFilename();
+
+            Path path = Paths.get(fileDir);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            Files.copy(multipartFile.getInputStream(), Paths.get(fileDir + fileName),
+                    StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException ioException) {
+            throw new UploadDownloadFileException("Unable to upload file");
+        }
     }
 }

@@ -11,8 +11,9 @@ public interface Links {
 
     // Bill URLs
     String GET_ALL_BILLS = BASE_URL + "bills/";
-    String GET_BILL_BY_ID = BASE_URL + "bills/{id}";
+    String GET_BILL_BY_ID = BASE_URL + "bills/{id}/";
     String CREATE_BILL = BASE_URL + "bills/";
-    String UPDATE_BILL = BASE_URL + "bills/{id}";
-    String DELETE_BILL = BASE_URL + "bills/{id}";
+    String UPDATE_BILL = BASE_URL + "bills/{id}/";
+    String DELETE_BILL = BASE_URL + "bills/{id}/";
+    String GET_BILL_IMAGE = BASE_URL + "bill/image/{id}/";
 }
